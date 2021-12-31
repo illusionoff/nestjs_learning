@@ -2,7 +2,8 @@ import { Body, Controller, Delete, Get, Header, HttpCode, HttpStatus, Param, Pos
 import { CreateProductDto } from './dto/create-product-dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { ProductsService } from './products.service';
-import { Request, Response } from 'express';
+import { Product, ProductDocument } from './schemas/products.schemas';
+// import { Request, Response } from 'express';
 @Controller('products')
 export class ProductsController {
 
@@ -28,7 +29,7 @@ export class ProductsController {
   // }
 
   @Get()
-  getAll() {
+  getAll(): Promise<Product[]> {
     return this.productsService.getAll()
   }
 
@@ -39,7 +40,7 @@ export class ProductsController {
 
   @Get(':id')
   // getOne(@Param('id') id: string): string {
-  getOne(@Param('id') id): string {
+  getOne(@Param('id') id: string): Promise<Product> {
     return this.productsService.getById(id)
     // return 'getOne' + id
   }
@@ -47,19 +48,24 @@ export class ProductsController {
   @Post()
   @HttpCode(HttpStatus.CREATED)
   @Header('Cache-Control', 'none')
-  create(@Body() createProductDto: CreateProductDto) {
+  create(@Body() createProductDto: CreateProductDto): Promise<Product> {
     // return `Title: ${createProductDto.title} Price: ${createProductDto.price}`
     return this.productsService.create(createProductDto)
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return 'Remove ' + id
+  // remove(@Param('id') id: string) {
+  //   return 'Remove ' + id
+
+  // }
+  remove(@Param('id') id: string): Promise<Product> {
+    return this.productsService.remove(id)
 
   }
 
   @Put(':id')
-  update(@Body() updateProductDto: UpdateProductDto, @Param('id') id: string) {
-    return 'Update ' + id
+  update(@Body() updateProductDto: UpdateProductDto, @Param('id') id: string): Promise<Product> {
+    // return 'Update ' + id
+    return this.productsService.update(id, updateProductDto)
   }
 }
